@@ -1,11 +1,12 @@
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = require("./schema");
 
 const server = new ApolloServer({
-    /*
-        Add typeDefs
-        Add resolvers
-    */
+  typeDefs
+  //    Add resolvers
 });
 
-server.listen()
-    .then(({ url }) => console.log(`GraphQL Service is running on ${ url }`));
+server
+  .listen()
+  .then(({ url }) => console.log(`GraphQL Service is running on ${url}`));
