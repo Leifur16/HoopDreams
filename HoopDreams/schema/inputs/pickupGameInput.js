@@ -5,7 +5,7 @@
 
 module.exports = `
     input PickupGameInput {
-        basketballFieldID: Int!
-        hostID: Int!
+        basketballFieldID: String!
+        hostID: String!
     }
 `;
