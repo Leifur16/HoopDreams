@@ -13,5 +13,6 @@ module.exports = `
         name: String!
         capacity: Int!
         pickupGames: [PickupGame!]!
+        status: BasketballFieldStatus!
     }
 `;

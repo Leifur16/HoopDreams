@@ -3,9 +3,9 @@
 • end : Moment*
 */
 
-module.exports = `{
+module.exports = `
     input PickupGameInput {
         basketballFieldID: Int!
         hostID: Int!
     }
-}`;
+`;
