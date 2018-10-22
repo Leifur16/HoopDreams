@@ -4,9 +4,9 @@ TODO add:
 • status : BasketballFieldStatus
 */
 
-module.exports = `{
+module.exports = `
     input BasketballFieldInput {
         name: String!
         capacity: Int!
     }
-}`;
+`;
