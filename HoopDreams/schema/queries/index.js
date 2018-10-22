@@ -1,5 +1,5 @@
 module.exports = `
-    type Qurey {
+    type Query {
         allBasketballFields: [BasketballField!]!
         allPickupGames: [PickupGame!]!
         allPlayers: [Player!]!
