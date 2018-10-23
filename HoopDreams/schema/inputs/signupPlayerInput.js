@@ -1,6 +1,6 @@
 module.exports = `
     input SignupPlayerInput {
-        playerId : String!
+        playerId: String!
         pickupGameId: String!
     }
 `;

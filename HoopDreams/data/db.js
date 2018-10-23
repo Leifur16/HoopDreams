@@ -11,7 +11,6 @@ var connection = mongoose.createConnection(
 module.exports = {
   Player: connection.model("Player", playerSchema),
   PickupGame: connection.model("PickupGame", pickupGameSchema),
-  SignupPlayer: connection.model("SignupPkayer", signupPlayerSchema),
+  SignupPlayer: connection.model("SignupPlayer", signupPlayerSchema),
   connection
 };
-

@@ -1,9 +1,9 @@
 const Schema = require("mongoose").Schema;
 
 module.exports = new Schema({
-  playerID: { type: Schema.Types.ObjectId, required: true, ref: "Player" },
-  pickupGameID: {
-    type: Schema.Types.ObjectId,
+  playerId: { type: Schema.Types.ObjectId, required: true, ref: "Player" },
+  pickupGameId: {
+    type: String,
     required: true,
     ref: "PickupGame"
   }

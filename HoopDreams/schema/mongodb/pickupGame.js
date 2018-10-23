@@ -2,10 +2,11 @@ const Schema = require("mongoose").Schema;
 
 module.exports = new Schema({
   start: { type: Schema.Types.Date, required: true },
-  basketballDieldID: {
-    type: Schema.Types.ObjectId,
+  end: { type: Schema.Types.Date, required: true },
+  basketballFieldId: {
+    type: String,
     required: true,
     ref: "PickupGame"
   },
-  hostID: { type: String, required: true, ref: "Player" }
+  hostId: { type: String, required: true, ref: "Player" }
 });
