@@ -1,8 +1,8 @@
-//const Moment = require("../scalar");
+const Moment = require("../scalar");
 
 //console.log(Moment);
 
-/* TODO add: 
+/* TODO add:
 • yearOfCreation : Moment*
 • status: BasketballFieldStatus*
 */
@@ -12,6 +12,7 @@ module.exports = `
         id: ID!
         name: String!
         capacity: Int!
+        yearOfCreation: Moment!
         pickupGames: [PickupGame!]!
         status: BasketballFieldStatus!
     }
