@@ -63,35 +63,29 @@ module.exports = {
           resolve(createdPlayer);
         });
       }),
-    /// this does not work, to sleepy to finish
     updatePlayer: (root, args, context) =>
       new Promise((resolve, reject) => {
-        const { input } = args;
-        //collection.update({_id:"123"}, {author:"Jessica", title:"Mongo facts"});
-        //db.products.save( { _id: 100, item: "water", qty: 30 } )
+        const { id, input } = args;
+
         context.Player.updateOne(
-          { _id: args.id },
+          { _id: id },
           {
             $set: { name: input.name }
-          } /*,
-          (err, updatePlayer) => {
-            console.log("updatePlayer: ", updatePlayer);
-            console.log("Error: ", err);
+          },
+          (err, updatedPLayer) => {
             if (err) {
               //TODO add error stuff
               reject(err);
             }
-            updatePlayer.name = input;
-            resolve(updatePlayer);
-          }*/
-        );
-        context.Player.findById(input.id, (err, player) => {
-          if (err) {
-            // add error message
-            reject(err);
+            context.Player.findById(id, (err, player) => {
+              if (err) {
+                // add error message
+                reject(err);
+              }
+              resolve(player);
+            });
           }
-          resolve(player);
-        });
+        );
       })
 
     //removePlayer
