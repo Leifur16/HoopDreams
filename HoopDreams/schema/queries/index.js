@@ -5,6 +5,6 @@ module.exports = `
         allPlayers: [Player!]!
         basketballField(id: String!): BasketballField
         pickupGame(id: String!): PickupGame
-        player(id: Int!): Player
+        player(id: String!): Player
     }
 `;

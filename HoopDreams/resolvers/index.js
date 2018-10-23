@@ -8,5 +8,8 @@ module.exports = {
   },
   Moment: {
     ...basketballResolver.Moment
+  },
+  Mutation: {
+    ...playerResolver.mutations
   }
 };

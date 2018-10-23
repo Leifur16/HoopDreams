@@ -1,3 +1,5 @@
+/*Skoðaðu mongoose-moment á NPM.*/
+
 const Schema = require("mongoose").Schema;
 
 module.exports = new Schema({

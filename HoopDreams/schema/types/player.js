@@ -1,6 +1,6 @@
 module.exports = `
     type Player {
-        id: ID!
+        id: String!
         name: String!
         playedGames: [PickupGame!]!
     }
