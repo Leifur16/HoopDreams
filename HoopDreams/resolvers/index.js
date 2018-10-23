@@ -1,10 +1,12 @@
-const basketballResolver = require('./basketballFieldResolver');
+const basketballResolver = require("./basketballFieldResolver");
+const playerResolver = require("./playerResolver");
 
 module.exports = {
-    Query: {
-        ...basketballResolver.queries
-    },
-    Moment: {
-        ...basketballResolver.Moment
-    }
-}
+  Query: {
+    ...basketballResolver.queries,
+    ...playerResolver.queries
+  },
+  Moment: {
+    ...basketballResolver.Moment
+  }
+};
