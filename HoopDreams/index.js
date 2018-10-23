@@ -1,6 +1,7 @@
 const { ApolloServer } = require("apollo-server");
 const resolvers = require("./resolvers");
 const typeDefs = require("./schema");
+const {basketballFields} = require('./services/basketballFieldService');
 
 const { Player, PickupGame, SignupPlayer } = require("./data/db");
 
@@ -10,7 +11,8 @@ const server = new ApolloServer({
   context: {
     Player,
     PickupGame,
-    SignupPlayer
+    SignupPlayer,
+    basketballFields
   }
 });
 
