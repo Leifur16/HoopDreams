@@ -7,33 +7,7 @@ module.exports = {
             // put error message here
             reject(err);
           }
-          //resolve(player);
-
-          /*context.SignupPlayer.find({}, (err, signupPlayers) => {
-            if (err) {
-              reject(err);
-            }
-            //console.log("SignupPlayer", SignupPlayer);
-          });
-
-          //console.log(context.PickupGame);
-          context.PickupGame.find({}, (err, pickupGames) => {
-            if (err) {
-              reject(err);
-            }
-            //console.log("PickupGame: ", pickupGames);
-          });
-
-          /*newObj = players.map(p => {
-            console.log(
-              "-------------------------------------------------------------------------"
-            );
-            console.log("...p", { ...p });
-            //const playedGamesArr = [];
-            return { p };
-          });*/
-          //console.log("newObj", newObj);
-
+          players.map(p => (p.id = p._id.toString()));
           resolve(players);
         });
       }),
@@ -96,6 +70,7 @@ module.exports = {
       new Promise((resolve, reject) => {
         //first remove from players
         const { id } = args;
+        // delete is deprocated used deleteOne
         context.Player.deleteOne({ _id: id }, (err, removed) => {
           if (err) {
             // TODO add error message
@@ -103,14 +78,14 @@ module.exports = {
           }
           console.log("Removed: ", removed);
           console.log("Error:", err);
-          resolve(true);
 
           // then remove player from signupPlayer
-          context.deleteMany({ playerId: id }, (err, removed) => {
+          context.SignupPlayer.deleteMany({ playerId: id }, (err, removed) => {
             if (err) {
               //TODO add error message
             }
             console.log("removed I think");
+            resolve(true);
           });
         });
       })
@@ -119,19 +94,12 @@ module.exports = {
     Player: {
       playedGames: (parent, args, context) =>
         new Promise((resolve, reject) => {
-          /*console.log("RAAAAAAAAAAASSSSSSSSSSSss");
-
-          console.log("Parent: ", parent);
-
-          console.log("Context: ", context);*/
           context.SignupPlayer.find(
             { playerId: parent._id },
             (err, connections) => {
-              //console.log(connections);
               if (err) {
                 reject(err);
               }
-
               context.PickupGame.aggregate(
                 [
                   {
@@ -144,7 +112,6 @@ module.exports = {
                   if (err) {
                     reject(err);
                   }
-                  //console.log("playedGames: ", playedGames);
                   console.log(playedGames);
                   playedGames.map(g => (g.id = g._id.toString()));
                   resolve(playedGames);
