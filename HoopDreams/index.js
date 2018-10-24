@@ -13,6 +13,11 @@ const server = new ApolloServer({
     PickupGame,
     SignupPlayer,
     basketballFields
+  },
+  introspection: true,
+  formatError: error => {
+    console.log(error);
+    return new Error('Internal server error');
   }
 });
 

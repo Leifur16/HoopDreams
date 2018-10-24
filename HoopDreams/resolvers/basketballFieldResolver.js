@@ -1,7 +1,6 @@
 const {GraphQLScalarType} = require('graphql');
 const moment = require('moment')
 
-
 module.exports = {
 
     queries: {
