@@ -86,8 +86,8 @@ module.exports = {
             });
           }
         );
-      })
+      }),
 
-    //removePlayer
+    removePlayer: (root, args, context) => new Promise(resolve, reject)
   }
 };
