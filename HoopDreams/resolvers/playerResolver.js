@@ -3,6 +3,7 @@ module.exports = {
     allPlayers: (root, args, context) =>
       new Promise((resolve, reject) => {
         context.Player.find({}, (err, players) => {
+
           if (err) {
             // put error message here
             reject(err);
@@ -53,7 +54,12 @@ module.exports = {
     createPlayer: (root, args, context) =>
       new Promise((resolve, reject) => {
         const { input } = args;
-        const newPlayer = { name: input.name };
+        
+
+        const newPlayer = {
+          name: input.name,
+          id: input.name.toLowerCase().replace(' ', '-')
+        };
 
         context.Player.create(newPlayer, (err, createdPlayer) => {
           if (err) {

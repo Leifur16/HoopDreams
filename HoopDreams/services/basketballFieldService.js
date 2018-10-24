@@ -1,5 +1,4 @@
 var request = require('request');
-const mongoose = require("mongoose");
 
 
 var data = request.get('https://basketball-fields.herokuapp.com/api/basketball-fields', {json: true}, (err, res, body) => {
