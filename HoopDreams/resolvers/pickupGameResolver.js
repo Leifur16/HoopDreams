@@ -14,6 +14,13 @@ module.exports = {
         })
       }).catch(function(err) {
         console.log("promise rejected");
+      }),
+    pickupGame: (parent, args, context) =>
+      new Promise((resolve, reject) => {
+        context.PickupGame.findById(args.id , (err, value) => {
+          if(err) reject(err);
+          resolve(value);
+        })
       })
   },
 
@@ -33,38 +40,46 @@ module.exports = {
         }
   },
   types: {
+
     PickupGame: {
-      registeredPlayers: (parent, args, context) => {
-        return context.Player.find( {}, (err, value) => {
-          new Promise((resolve, reject) => {
-            if(err) reject(err);
+      registeredPlayers: (parent, args, context) =>
+        new Promise((resolve, reject) => {
+          context.SignupPlayer.find(
+            { pickupGameId: parent._id },
+            (err, connections) => {
+              //console.log(connections);
+              if (err) {
+                reject(err);
+              }
+              context.Player.aggregate(
+                [
+                  {
+                    $match: {
+                      _id: { $in: connections.map(c => c.playerId) }
+                    }
+                  }
+                ],
+                (err, playedGames) => {
+                  if (err) {
+                    reject(err);
+                  }
+                  //console.log("playedGames: ", playedGames);
+                  console.log(playedGames);
+                  playedGames.map(g => (g.id = g._id.toString()));
+                  resolve(playedGames);
+                }
+              )
+            }
+          )
+        }),
+        location: (parent, args, context) => {
+          console.log("basket: ", context.basketballFields.response.body);
+          let ret = context.basketballFields.response.body.find(d => d.id === parent.basketballFieldId);
 
-            context.SignupPlayer.find({playerId: value.id}, (err, pValue) => {
-              console.log(pValue);
-            })
-          })
-        })
+        }
 
-        /*return context.SignupPlayer.find({ pickupGameId : parent.id }, (err, value) => {
-          new Promise((resolve, reject) => {
-            if(err) reject(err);
+      },
 
-            context.Player.find({}, (err, pValue) => {
-
-              var arr = [];
-              console.log("pValue: ", pValue);
-              console.log("value: ", value);
-              pValue.map(p => {
-                if(p.id === value.playerId) arr.push(pValue);
-              });
-              //console.log(arr);
-              resolve(arr);
-            })
-            resolve(value);
-          })
-        });*/
-      }
-    },
     Player: {
       playedGames: (parent, args, context) => {
         return context.SignupPlayer.find({ playerId : parent.id }, (err, value) => {
@@ -74,7 +89,7 @@ module.exports = {
 
             resolve(value);
           })
-        });
+        })
       }
     }
   }

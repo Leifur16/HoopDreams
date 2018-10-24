@@ -109,7 +109,7 @@ Player.insertMany(
                   pickupGameId: getResourceIdByName(
                     pickupGames,
                     "basketballFieldId",
-                    "31154ca3-3eef-4dbf-b438-ec5d4d3af708"
+                    "1798a72b-b619-4150-b604-5de20fa3cc56"
                   )
                 },
                 {
@@ -125,7 +125,7 @@ Player.insertMany(
                   pickupGameId: getResourceIdByName(
                     pickupGames,
                     "basketballFieldId",
-                    "31154ca3-3eef-4dbf-b438-ec5d4d3af708"
+                    "ef42039e-77bc-40a3-8121-c2a5424ebcdb"
                   )
                 }
               ],
