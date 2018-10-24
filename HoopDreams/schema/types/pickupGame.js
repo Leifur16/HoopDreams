@@ -10,7 +10,7 @@ module.exports = `
         start: Moment!
         end: Moment!
         location: BasketballField!
-        registeredPlayers: [Player!]!
+        registeredPlayers: [Player]
         host: Player!
     }
 `;

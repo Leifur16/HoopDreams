@@ -17,7 +17,6 @@ module.exports = {
             //console.log("SignupPlayer", SignupPlayer);
           });
 
-          console.log(context.PickupGame);
           context.PickupGame.find({}, (err, pickupGames) => {
             if (err) {
               reject(err);
@@ -26,10 +25,7 @@ module.exports = {
           });
 
           newObj = players.map(p => {
-            console.log(
-              "-------------------------------------------------------------------------"
-            );
-            console.log("...p", { ...p });
+
             //const playedGamesArr = [];
             return { p };
           });
@@ -54,7 +50,7 @@ module.exports = {
     createPlayer: (root, args, context) =>
       new Promise((resolve, reject) => {
         const { input } = args;
-        
+
 
         const newPlayer = {
           name: input.name,
