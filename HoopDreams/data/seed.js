@@ -11,7 +11,8 @@ Object.keys(connection.collections).forEach(collection => {
     PickupGame.collection.drop();
   }
   if (collection === "signupplayer") {
-    PickupGame.collection.drop();
+    console.log("DELETETHIS");
+    SignupPlayer.collection.drop();
   }
 });
 
@@ -51,7 +52,9 @@ Player.insertMany(
       if (err) {
         throw new Error(err);
       }
-      console.log(players);
+
+      //console.log(players);
+      /// ------- PickupGames ------- ///
 
       PickupGame.insertMany(
         [
@@ -84,16 +87,20 @@ Player.insertMany(
               console.log("ERROR!!");
               throw new Error(err);
             }
-            console.log("PICKUPGAMES: ", pickupGames);
+            /// ------- PickupGames ------- ///
 
-            console.log(
+            //console.log("PICKUPGAMES: ", pickupGames);
+
+            /*console.log(
               "get pickupgame id: ",
               getResourceIdByName(
                 pickupGames,
                 "basketballFieldId",
                 "31154ca3-3eef-4dbf-b438-ec5d4d3af708"
               )
-            );
+            );*/
+            //console.log(getResourceIdByName(players, "name", "Xerxes"));
+
             SignupPlayer.insertMany(
               [
                 {
@@ -131,15 +138,12 @@ Player.insertMany(
               ],
               err => {
                 if (err) {
-                  console.log("EEEEEEERRRRRRRROOOOOOORR!");
                   throw new Error(err);
                 }
                 SignupPlayer.find({}, (err, signupPlayers) => {
                   if (err) {
-                    console.log("PICKUPGAME ERROR!");
                     throw new Error(err);
                   }
-                  console.log(signupPlayers);
                 });
               }
             );
