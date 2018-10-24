@@ -6,9 +6,9 @@ module.exports = new Schema({
   start: { type: Schema.Types.Date, required: true },
   end: { type: Schema.Types.Date, required: true },
   basketballFieldId: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
     ref: "PickupGame"
   },
-  hostId: { type: String, required: true, ref: "Player" }
+  hostId: { type: Schema.Types.ObjectId, required: true, ref: "Player" }
 });
