@@ -13,7 +13,7 @@ module.exports = `
         name: String!
         capacity: Int!
         yearOfCreation: Moment!
-        pickupGames: [PickupGame!]!
+        pickupGames: [PickupGame]
         status: BasketballFieldStatus!
     }
 `;

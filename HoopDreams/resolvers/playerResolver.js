@@ -29,6 +29,7 @@ module.exports = {
               reject(new customErrors.IntervalServerError());
             }
           }
+          console.log("player: ", player);
           resolve(player);
         });
       })
