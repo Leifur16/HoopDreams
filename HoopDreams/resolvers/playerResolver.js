@@ -17,13 +17,14 @@ module.exports = {
       new Promise((resolve, reject) => {
         context.Player.findById(args.id, (err, player) => {
           if (err) {
-            // add error message
-            //console.log("", err.name);
             if (err.name == "CastError") {
               reject(new customErrors.BadRequest());
             } else {
               reject(new customErrors.IntervalServerError());
             }
+          }
+          if (!player) {
+            reject(new customErrors.NotFoundError());
           }
           resolve(player);
         });
@@ -40,7 +41,7 @@ module.exports = {
 
         context.Player.create(newPlayer, (err, createdPlayer) => {
           if (err) {
-            reject(customErrors.BadRequest());
+            reject(new customErrors.IntervalServerError());
           }
           resolve(createdPlayer);
         });
@@ -56,6 +57,7 @@ module.exports = {
           },
           (err, updatedPLayer) => {
             if (err) {
+              console.log(err);
               reject(customErrors.NotFoundError());
             }
             context.Player.findById(id, (err, player) => {
@@ -98,6 +100,7 @@ module.exports = {
               if (err) {
                 reject(customErrors.NotFoundError());
               }
+              console.log("IM HERER 1");
               context.PickupGame.aggregate(
                 [
                   {
@@ -110,7 +113,8 @@ module.exports = {
                   if (err) {
                     reject(customErrors.IntervalServerError());
                   }
-                  console.log(playedGames);
+                  console.log("IM HERER 2");
+                  // console.log(playedGames);
                   playedGames.map(g => (g.id = g._id.toString()));
                   resolve(playedGames);
                 }
