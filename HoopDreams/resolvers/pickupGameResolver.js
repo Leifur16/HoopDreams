@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 module.exports = {
   queries: {
     allPickupGames: (parent, args, context) =>
@@ -25,19 +27,43 @@ module.exports = {
   },
 
   mutations: {
-    createPickupGame: (parent, args, context) => {
-      new Promise((resolve, reject) => {
-          const { input } = args;
+    createPickupGame: (parent, {input}, context) => {
+      return new Promise((resolve, reject) => {
+
           const newGame =  {
             start: input.start,
             end: input.end,
             basketballFieldId: input.basketballFieldId,
-            hostId: input.hostId
+            hostId: mongoose.Types.ObjectId(input.hostId)
           };
-          context.PickupGame.create(newGame);
-          resolve(newGame);
-          })
-        }
+
+          context.PickupGame.create(newGame, (err, createdPlayer) => {
+            if(err) {
+                reject(err);
+            }
+            resolve(createdPlayer);
+          });
+      })
+    },
+    removePickupGame: (root, args, context) =>
+      new Promise((resolve, reject) => {
+        //first remove from players
+        const { id } = args;
+        // delete is deprocated used deleteOne
+        context.PickupGame.deleteOne({ _id: id }, (err, removed) => {
+          if (err) {
+            reject(err);
+          }
+
+          // then remove player from signupPlayer
+          context.SignupPlayer.deleteMany({ pickupGameId: id }, (err, removed) => {
+            if (err) {
+              //TODO add error message
+            }
+            resolve(true);
+          });
+        });
+      })
   },
   types: {
 

@@ -30,8 +30,7 @@ module.exports = {
 
 
         const newPlayer = {
-          name: input.name,
-          id: input.name.toLowerCase().replace(" ", "-")
+          name: input.name
         };
 
         context.Player.create(newPlayer, (err, createdPlayer) => {
