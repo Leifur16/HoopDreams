@@ -1,8 +1,8 @@
 const basketballResolver = require("./basketballFieldResolver");
 const playerResolver = require("./playerResolver");
-const pickupGameResolver = require('./pickupGameResolver');
-const {GraphQLScalarType} = require('graphql');
-const moment = require('moment')
+const pickupGameResolver = require("./pickupGameResolver");
+const { GraphQLScalarType } = require("graphql");
+const moment = require("moment");
 
 module.exports = {
   Query: {
@@ -10,8 +10,7 @@ module.exports = {
     ...playerResolver.queries,
     ...pickupGameResolver.queries
   },
-  Moment:
-    new GraphQLScalarType({
+  Moment: new GraphQLScalarType({
     name: "Moment",
     description: "used for getting Icelandic locale in 'llll' format",
     parsevalue: value => {
@@ -21,16 +20,15 @@ module.exports = {
       return value;
     },
     serialize: value => {
-       moment.locale('is');
-       return value = moment().format('llll');
+      moment.locale("is");
+      return (value = moment().format("llll"));
     }
-
   }),
   Mutation: {
     ...playerResolver.mutations,
     ...pickupGameResolver.mutations
   },
-    ...basketballResolver.types,
-    ...pickupGameResolver.types
-
+  ...basketballResolver.types,
+  ...pickupGameResolver.types,
+  ...playerResolver.types
 };

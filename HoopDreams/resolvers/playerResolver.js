@@ -19,17 +19,15 @@ module.exports = {
       new Promise((resolve, reject) => {
         context.Player.findById(args.id, (err, player) => {
           if (err) {
-            // add error message
-            //console.log("", err.name);
             if (err.name == "CastError") {
-              console.log("throw this error");
               reject(new customErrors.BadRequest());
             } else {
-              console.log("dont throw this error");
               reject(new customErrors.IntervalServerError());
             }
           }
-          console.log("player: ", player);
+          if (!player) {
+            reject(new customErrors.NotFoundError());
+          }
           resolve(player);
         });
       })
@@ -112,6 +110,7 @@ module.exports = {
               if (err) {
                 reject(err);
               }
+              console.log("IM HERER 1");
               context.PickupGame.aggregate(
                 [
                   {
@@ -124,7 +123,8 @@ module.exports = {
                   if (err) {
                     reject(err);
                   }
-                  console.log(playedGames);
+                  console.log("IM HERER 2");
+                  // console.log(playedGames);
                   playedGames.map(g => (g.id = g._id.toString()));
                   resolve(playedGames);
                 }

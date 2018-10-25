@@ -70,60 +70,95 @@ module.exports = {
             }
           );
         });
-      })
-  },
-  addPlayerToPickupGame: (parent, args, context) =>
-    new Promise((resolve, reject) => {
+      }),
+    addPlayerToPickupGame: async (parent, args, context) => {
       const { input } = args;
-      context.PickupGame.findById(input.pickupGameId, (err, pickupGame) => {
-        if (err) {
-          reject(err);
-        }
-        console.log("pickupgame: ", pickupGame);
-        // check if passed
-        console.log("end:", pickupGame.end);
-        //console.log("ned Date(): ", new Date());
-        if (new Date() > pickupGame.end) {
-          console.log("game has ended");
-          // throw error
-        } else {
-          console.log("date has not ended");
-        }
-        //check if full
-        //console.log(pickupGame.)
+      // check if pickup game exist
+      try {
+        const pickupGame = await context.PickupGame.findById(
+          input.pickupGameId
+        );
 
-        resolve(pickupGame);
-      });
-    }),
-  removePlayerFromPickupGame: (parent, args, context) =>
-    new Promise((resolve, reject) => {
-      //context.
-      const { input } = args;
-      console.log("input: ", input);
-      context.PickupGame.findById(input.pickupGameId, (err, pickupGame) => {
-        if (err) {
-          reject(err);
-        }
-        if (new Date() > pickupGame.end) {
-          console.log("game has ended");
-          // throw error
-        } else {
-          console.log("date has not ended");
-          context.SignupPlayer.deleteOne(
-            { pickupGameId: input.pickupGameId, playerId: input.playerId },
-            (err, removed) => {
-              if (err) {
-                // throw error
-                reject(err);
+        // check if player exist
+        const player = await context.Player.findById(input.playerId);
+        // check if pickupGame is full
+
+        // use different route later.
+        const basketballField = await context.basketballFields.response.body.find(
+          d => d.id === pickupGame.basketballFieldId
+        );
+
+        const registeredPLayersInPickupgame = await context.SignupPlayer.find(
+          { pickupGameId: input.pickupGameId },
+          (err, connections) => {
+            context.Player.aggregate(
+              [
+                {
+                  $match: {
+                    _id: { $in: connections.map(c => c.playerId) }
+                  }
+                }
+              ],
+              (err, playedGames) => {
+                return playedGames;
               }
-              resolve(pickupGame);
-            }
-          );
+            );
+          }
+        );
+
+        console.log(
+          registeredPLayersInPickupgame.length,
+          " >= ",
+          basketballField.capacity,
+          registeredPLayersInPickupgame >= basketballField.capacity
+        );
+
+        if (registeredPLayersInPickupgame.length >= basketballField.capacity) {
+          return new customErrors.PickupGameExceedMaximumError();
         }
-        // check if pickupgame is done
-        resolve(pickupGame);
-      });
-    }),
+
+        const newSignup = {
+          pickupGameId: input.pickupGameId,
+          playerId: input.playerId
+        };
+
+        const signup = await context.SignupPlayer.create(newSignup);
+
+        return pickupGame;
+      } catch (err) {
+        if (err) {
+          console.log("err: ", err);
+          if (err.name == "CastError") {
+            return new customErrors.BadRequest();
+          } else {
+            return new customErrors.IntervalServerError();
+          }
+        }
+      }
+    },
+    removePlayerFromPickupGame: async (parent, args, context) => {
+      const { input } = args;
+      try {
+        const pickupGame = await context.PickupGame.findById(
+          input.pickupGameId
+        );
+        console.log(new Date(), " > ", pickupGame.end);
+        if (new Date() > pickupGame.end) {
+          return new customErrors.PickupGameAlreadyPassedError();
+        }
+        const removed = await context.SignupPlayer.deleteMany({
+          pickupGameId: input.pickupGameId,
+          playerId: input.playerId
+        });
+      } catch (err) {
+        if (err.name == "CastError") {
+          return new customErrors.BadRequest();
+        } else {
+          return new customErrors.IntervalServerError();
+        }
+      }
+    }
+  },
   types: {
     PickupGame: {
       registeredPlayers: (parent, args, context) =>
