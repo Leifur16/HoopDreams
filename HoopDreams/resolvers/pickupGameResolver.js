@@ -63,8 +63,6 @@ module.exports = {
                   if (err) {
                     reject(err);
                   }
-                  //console.log("playedGames: ", playedGames);
-                  console.log(playedGames);
                   playedGames.map(g => (g.id = g._id.toString()));
                   resolve(playedGames);
                 }
@@ -73,9 +71,8 @@ module.exports = {
           )
         }),
         location: (parent, args, context) => {
-          console.log("basket: ", context.basketballFields.response.body);
           let ret = context.basketballFields.response.body.find(d => d.id === parent.basketballFieldId);
-
+          return ret;
         }
 
       },
