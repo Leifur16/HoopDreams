@@ -29,6 +29,7 @@ module.exports = {
       new Promise((resolve, reject) => {
         const { input } = args;
 
+
         const newPlayer = {
           name: input.name
         };
