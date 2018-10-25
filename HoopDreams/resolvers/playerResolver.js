@@ -15,6 +15,7 @@ module.exports = {
     player: (root, args, context) =>
       new Promise((resolve, reject) => {
         context.Player.findById(args.id, (err, player) => {
+          console.log(err);
           if (err) {
             // add error message
             reject(err);
@@ -29,8 +30,7 @@ module.exports = {
         const { input } = args;
 
         const newPlayer = {
-          name: input.name,
-          id: input.name.toLowerCase().replace(" ", "-")
+          name: input.name
         };
 
         context.Player.create(newPlayer, (err, createdPlayer) => {
@@ -83,6 +83,7 @@ module.exports = {
           context.SignupPlayer.deleteMany({ playerId: id }, (err, removed) => {
             if (err) {
               //TODO add error message
+              reject(err);
             }
             console.log("removed I think");
             resolve(true);

@@ -6,7 +6,7 @@ TODO add:
 
 module.exports = `
     type PickupGame {
-        id: ID
+        id: ID!
         start: Moment!
         end: Moment!
         location: BasketballField!
