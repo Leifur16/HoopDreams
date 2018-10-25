@@ -4,8 +4,8 @@ const pickupGameSchema = require("../schema/mongodb/pickupGame");
 const signupPlayerSchema = require("../schema/mongodb/signupPlayer");
 
 var connection = mongoose.createConnection(
-  "mongodb://abc123:abc123@ds139193.mlab.com:39193/hoopdreams-leifur16",
-  //    "mongodb://abc123:abc123@ds239903.mlab.com:39903/hoopdreams-leifur16",
+  //"mongodb://abc123:abc123@ds139193.mlab.com:39193/hoopdreams-leifur16",
+      "mongodb://abc123:abc123@ds239903.mlab.com:39903/hoopdreams-leifur16",
   { useNewUrlParser: true }
 );
 

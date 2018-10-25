@@ -1,3 +1,5 @@
+const customErrors = require("../errors");
+
 module.exports = {
 
     queries: {
@@ -5,7 +7,9 @@ module.exports = {
             return context.basketballFields.response.body;
         },
         basketballField: (parent, args, context) => {
-            return context.basketballFields.response.body.find(d => d.id === args.id)
+          var ret = context.basketballFields.response.body.find(d => d.id === args.id);
+          if(ret === undefined) throw customErrors.NotFoundError;
+            return ret;
         }
     },
     types: {

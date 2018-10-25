@@ -18,22 +18,50 @@ module.exports = {
       new Promise((resolve, reject) => {
         context.PickupGame.findById(args.id, (err, value) => {
           if (err) {
-            console.log("error.name", error.name);
-            if ((error.name = "CastError")) {
-              console.log("throw custom error");
-              reject(customErrors.BadRequest);
+            if ((err.name = "CastError")) {
+              reject(customErrors.NotFoundError);
             } else {
               reject(customErrors.IntervalServerError);
             }
           }
+
           resolve(value);
         });
       })
   },
 
   mutations: {
-    createPickupGame: (parent, { input }, context) => {
-      return new Promise((resolve, reject) => {
+    createPickupGame: async (parent, { input }, context) => {
+      var field = context.basketballFields.response.body.find(
+        x => x.id === input.basketballFieldId
+      );
+      console.log(field);
+      if (!field) {
+        return new customErrors.NotFoundError();
+      }
+
+      const host = context.findById(input.hostId);
+      if (!host) {
+        return new customErrors.NotFoundError();
+      }
+
+      if (field.status === "CLOSED")
+        return new customErrors.BasketballFieldClosedError();
+
+      var newStart = new Date(input.start);
+      var newEnd = new Date(input.end);
+      try {
+        const value = await context.PickupGame.find({});
+        var elem = value.find(
+          game =>
+            game.start <= newStart <= game.end &&
+            game.start <= newEnd <= game.end &&
+            game.basketballFieldId === input.basketballFieldId
+        );
+        if (elem) {
+          return new customErrors.PickupGameOverlapError();
+        }
+
         const newGame = {
           start: input.start,
           end: input.end,
@@ -41,22 +69,25 @@ module.exports = {
           hostId: mongoose.Types.ObjectId(input.hostId)
         };
 
-        context.PickupGame.create(newGame, (err, createdPlayer) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(createdPlayer);
-        });
-      });
+        const newPickupGame = await context.PickupGame.create(newGame);
+        return newPickupGame;
+      } catch (e) {
+        if (e.name === "CastError") {
+          return new customErrors.BadRequest();
+        } else {
+          return new customErrors.IntervalServerError();
+        }
+      }
     },
     removePickupGame: (root, args, context) =>
       new Promise((resolve, reject) => {
         //first remove from players
         const { id } = args;
+
         // delete is deprocated used deleteOne
         context.PickupGame.deleteOne({ _id: id }, (err, removed) => {
           if (err) {
-            reject(err);
+            reject(customErrors.NotFoundError);
           }
 
           // then remove player from signupPlayer
@@ -64,7 +95,7 @@ module.exports = {
             { pickupGameId: id },
             (err, removed) => {
               if (err) {
-                //TODO add error message
+                reject(customErrors.NotFoundError);
               }
               resolve(true);
             }
@@ -104,13 +135,6 @@ module.exports = {
               }
             );
           }
-        );
-
-        console.log(
-          registeredPLayersInPickupgame.length,
-          " >= ",
-          basketballField.capacity,
-          registeredPLayersInPickupgame >= basketballField.capacity
         );
 
         if (registeredPLayersInPickupgame.length >= basketballField.capacity) {

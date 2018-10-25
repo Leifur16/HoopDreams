@@ -6,9 +6,7 @@ module.exports = {
       new Promise((resolve, reject) => {
         context.Player.find({}, (err, players) => {
           if (err) {
-            // put error message here
-
-            reject(err);
+            reject(customErrors.IntervalServerError());
           }
           players.map(p => (p.id = p._id.toString()));
           resolve(players);
@@ -43,9 +41,7 @@ module.exports = {
 
         context.Player.create(newPlayer, (err, createdPlayer) => {
           if (err) {
-            //TODO add error stuff
-
-            reject(err);
+            reject(new customErrors.IntervalServerError());
           }
           resolve(createdPlayer);
         });
@@ -61,13 +57,12 @@ module.exports = {
           },
           (err, updatedPLayer) => {
             if (err) {
-              //TODO add error stuff
-              reject(err);
+              console.log(err);
+              reject(customErrors.NotFoundError());
             }
             context.Player.findById(id, (err, player) => {
               if (err) {
-                // TODO add error message
-                reject(err);
+                reject(customErrors.NotFoundError());
               }
               resolve(player);
             });
@@ -82,19 +77,14 @@ module.exports = {
         // delete is deprocated used deleteOne
         context.Player.deleteOne({ _id: id }, (err, removed) => {
           if (err) {
-            // TODO add error message
-            reject(err);
+            reject(customErrors.NotFoundError());
           }
-          console.log("Removed: ", removed);
-          console.log("Error:", err);
 
           // then remove player from signupPlayer
           context.SignupPlayer.deleteMany({ playerId: id }, (err, removed) => {
             if (err) {
-              //TODO add error message
-              reject(err);
+              reject(customErrors.NotFoundError());
             }
-            console.log("removed I think");
             resolve(true);
           });
         });
@@ -108,7 +98,7 @@ module.exports = {
             { playerId: parent._id },
             (err, connections) => {
               if (err) {
-                reject(err);
+                reject(customErrors.NotFoundError());
               }
               console.log("IM HERER 1");
               context.PickupGame.aggregate(
@@ -121,7 +111,7 @@ module.exports = {
                 ],
                 (err, playedGames) => {
                   if (err) {
-                    reject(err);
+                    reject(customErrors.IntervalServerError());
                   }
                   console.log("IM HERER 2");
                   // console.log(playedGames);
