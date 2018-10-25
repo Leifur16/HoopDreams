@@ -1,7 +1,7 @@
 const { ApolloServer } = require("apollo-server");
 const resolvers = require("./resolvers");
 const typeDefs = require("./schema");
-const {basketballFields} = require('./services/basketballFieldService');
+const { basketballFields } = require("./services/basketballFieldService");
 
 const { Player, PickupGame, SignupPlayer } = require("./data/db");
 
@@ -17,7 +17,7 @@ const server = new ApolloServer({
   introspection: true,
   formatError: error => {
     console.log(error);
-    return new Error('Internal server error');
+    return new Error("Internal server error");
   }
 });
 

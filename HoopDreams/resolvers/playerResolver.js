@@ -1,3 +1,5 @@
+const customErrors = require("../errors");
+
 module.exports = {
   queries: {
     allPlayers: (root, args, context) =>
@@ -5,6 +7,7 @@ module.exports = {
         context.Player.find({}, (err, players) => {
           if (err) {
             // put error message here
+
             reject(err);
           }
           players.map(p => (p.id = p._id.toString()));
@@ -15,10 +18,16 @@ module.exports = {
     player: (root, args, context) =>
       new Promise((resolve, reject) => {
         context.Player.findById(args.id, (err, player) => {
-          console.log(err);
           if (err) {
             // add error message
-            reject(err);
+            //console.log("", err.name);
+            if (err.name == "CastError") {
+              console.log("throw this error");
+              reject(new customErrors.BadRequest());
+            } else {
+              console.log("dont throw this error");
+              reject(new customErrors.IntervalServerError());
+            }
           }
           resolve(player);
         });
@@ -29,7 +38,6 @@ module.exports = {
       new Promise((resolve, reject) => {
         const { input } = args;
 
-
         const newPlayer = {
           name: input.name
         };
@@ -37,6 +45,7 @@ module.exports = {
         context.Player.create(newPlayer, (err, createdPlayer) => {
           if (err) {
             //TODO add error stuff
+
             reject(err);
           }
           resolve(createdPlayer);
