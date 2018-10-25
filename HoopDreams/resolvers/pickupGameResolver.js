@@ -18,45 +18,76 @@ module.exports = {
       new Promise((resolve, reject) => {
         context.PickupGame.findById(args.id, (err, value) => {
           if (err) {
-            console.log("error.name", error.name);
-            if ((error.name = "CastError")) {
-              console.log("throw custom error");
-              reject(customErrors.BadRequest);
+            if ((err.name = "CastError")) {
+              reject(customErrors.NotFoundError);
             } else {
               reject(customErrors.IntervalServerError);
             }
           }
           resolve(value);
-        });
+        })/*.then(val => {
+          if(val === null) reject(customErrors.NotFoundError);
+
+        });*/
       })
   },
 
   mutations: {
-    createPickupGame: (parent, { input }, context) => {
-      return new Promise((resolve, reject) => {
-        const newGame = {
-          start: input.start,
-          end: input.end,
-          basketballFieldId: input.basketballFieldId,
-          hostId: mongoose.Types.ObjectId(input.hostId)
-        };
+    createPickupGame: async (parent, { input }, context) => {
 
-        context.PickupGame.create(newGame, (err, createdPlayer) => {
-          if (err) {
-            reject(err);
+        var field = context.basketballFields.response.body.find(x => x.id === input.basketballFieldId);
+        console.log(field);
+        if(!field) {
+          return new customErrors.NotFoundError();
+        }
+
+        const host = context.findById(input.hostId);
+        if(!host) {
+          return new customErrors.NotFoundError();
+        }
+
+        if(field.status === 'CLOSED') return new customErrors.BasketballFieldClosedError();
+
+        var newStart = new Date(input.start);
+        var newEnd = new Date(input.end);
+        try {
+            const value = await context.PickupGame.find({});
+            var elem =  value.find((game) =>
+              game.start <= newStart <= game.end &&
+                  game.start <= newEnd <= game.end &&
+                    game.basketballFieldId === input.basketballFieldId)
+          if(elem) {
+            return new customErrors.PickupGameOverlapError();
           }
-          resolve(createdPlayer);
-        });
-      });
+
+          const newGame = {
+            start: input.start,
+            end: input.end,
+            basketballFieldId: input.basketballFieldId,
+            hostId: mongoose.Types.ObjectId(input.hostId)
+          };
+
+          const newPickupGame = await context.PickupGame.create(newGame);
+          return(newPickupGame);
+
+        } catch (e) {
+          if(e.name === "CastError") {
+            return new customErrors.BadRequest();
+          } else {
+            return new customErrors.IntervalServerError();
+          }
+
+        }
     },
     removePickupGame: (root, args, context) =>
       new Promise((resolve, reject) => {
         //first remove from players
         const { id } = args;
+
         // delete is deprocated used deleteOne
         context.PickupGame.deleteOne({ _id: id }, (err, removed) => {
           if (err) {
-            reject(err);
+            reject(customErrors.NotFoundError);
           }
 
           // then remove player from signupPlayer
@@ -64,7 +95,7 @@ module.exports = {
             { pickupGameId: id },
             (err, removed) => {
               if (err) {
-                //TODO add error message
+                reject(customErrors.NotFoundError);
               }
               resolve(true);
             }
@@ -79,20 +110,12 @@ module.exports = {
         if (err) {
           reject(err);
         }
-        console.log("pickupgame: ", pickupGame);
-        // check if passed
-        console.log("end:", pickupGame.end);
-        //console.log("ned Date(): ", new Date());
         if (new Date() > pickupGame.end) {
-          console.log("game has ended");
-          // throw error
+          reject(customErrors.PickupGameAlreadyPassedError)
         } else {
-          console.log("date has not ended");
+          resolve(pickupGame);
         }
-        //check if full
-        //console.log(pickupGame.)
 
-        resolve(pickupGame);
       });
     }),
   removePlayerFromPickupGame: (parent, args, context) =>

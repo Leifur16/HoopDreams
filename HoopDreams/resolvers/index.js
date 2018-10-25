@@ -15,14 +15,16 @@ module.exports = {
     name: "Moment",
     description: "used for getting Icelandic locale in 'llll' format",
     parsevalue: value => {
-      return value;
+      moment.locale('is');
+      return value = moment(value).format('llll');
     },
     parseliteral: value => {
-      return value;
+      moment.locale('is');
+      return value = moment(value).format('llll');
     },
     serialize: value => {
        moment.locale('is');
-       return value = moment().format('llll');
+       return value = moment(value).format('llll');
     }
 
   }),

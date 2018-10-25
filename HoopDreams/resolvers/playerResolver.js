@@ -6,9 +6,7 @@ module.exports = {
       new Promise((resolve, reject) => {
         context.Player.find({}, (err, players) => {
           if (err) {
-            // put error message here
-
-            reject(err);
+            reject(customErrors.IntervalServerError());
           }
           players.map(p => (p.id = p._id.toString()));
           resolve(players);
@@ -22,14 +20,11 @@ module.exports = {
             // add error message
             //console.log("", err.name);
             if (err.name == "CastError") {
-              console.log("throw this error");
               reject(new customErrors.BadRequest());
             } else {
-              console.log("dont throw this error");
               reject(new customErrors.IntervalServerError());
             }
           }
-          console.log("player: ", player);
           resolve(player);
         });
       })
@@ -45,9 +40,7 @@ module.exports = {
 
         context.Player.create(newPlayer, (err, createdPlayer) => {
           if (err) {
-            //TODO add error stuff
-
-            reject(err);
+            reject(customErrors.BadRequest());
           }
           resolve(createdPlayer);
         });
@@ -63,13 +56,11 @@ module.exports = {
           },
           (err, updatedPLayer) => {
             if (err) {
-              //TODO add error stuff
-              reject(err);
+              reject(customErrors.NotFoundError());
             }
             context.Player.findById(id, (err, player) => {
               if (err) {
-                // TODO add error message
-                reject(err);
+                reject(customErrors.NotFoundError());
               }
               resolve(player);
             });
@@ -84,19 +75,14 @@ module.exports = {
         // delete is deprocated used deleteOne
         context.Player.deleteOne({ _id: id }, (err, removed) => {
           if (err) {
-            // TODO add error message
-            reject(err);
+            reject(customErrors.NotFoundError());
           }
-          console.log("Removed: ", removed);
-          console.log("Error:", err);
 
           // then remove player from signupPlayer
           context.SignupPlayer.deleteMany({ playerId: id }, (err, removed) => {
             if (err) {
-              //TODO add error message
-              reject(err);
+              reject(customErrors.NotFoundError());
             }
-            console.log("removed I think");
             resolve(true);
           });
         });
@@ -110,7 +96,7 @@ module.exports = {
             { playerId: parent._id },
             (err, connections) => {
               if (err) {
-                reject(err);
+                reject(customErrors.NotFoundError());
               }
               context.PickupGame.aggregate(
                 [
@@ -122,7 +108,7 @@ module.exports = {
                 ],
                 (err, playedGames) => {
                   if (err) {
-                    reject(err);
+                    reject(customErrors.IntervalServerError());
                   }
                   console.log(playedGames);
                   playedGames.map(g => (g.id = g._id.toString()));
